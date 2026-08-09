@@ -190,7 +190,12 @@ public class MetalMaterial implements MaterialManager.Material {
 
         chandelier = EndBlocks.registerBlock(name + "_chandelier", new ChandelierBlock(block));
         bulb_lantern = EndBlocks.registerBlock(name + "_bulb_lantern", new BulbVineLanternBlock(lanternProperties));
-        bulb_lantern_colored = new ColoredMaterial(BulbVineLanternColoredBlock::new, bulb_lantern, false);
+        bulb_lantern_colored = new ColoredMaterial(
+                name + "_bulb_lantern",
+                BulbVineLanternColoredBlock::new,
+                bulb_lantern,
+                false
+        );
 
         nugget = EndItems.registerEndItem(name + "_nugget", new ModelProviderItem(itemSettings));
         ingot = EndItems.registerEndItem(name + "_ingot", new ModelProviderItem(itemSettings));

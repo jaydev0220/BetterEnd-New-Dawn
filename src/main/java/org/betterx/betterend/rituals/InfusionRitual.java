@@ -3,6 +3,8 @@ package org.betterx.betterend.rituals;
 import org.betterx.betterend.advancements.BECriteria;
 import org.betterx.betterend.blocks.entities.InfusionPedestalEntity;
 import org.betterx.betterend.blocks.entities.PedestalBlockEntity;
+import org.betterx.betterend.blocks.InfusionPedestal;
+import org.betterx.betterend.blocks.basis.PedestalBlock;
 import org.betterx.betterend.particle.InfusionParticleType;
 import org.betterx.betterend.recipe.builders.InfusionRecipe;
 
@@ -17,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk.EntityCreationType;
 import net.minecraft.world.phys.Vec3;
@@ -25,6 +28,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class InfusionRitual implements Container {
     public class InfusionInput implements RecipeInput {
@@ -278,5 +282,42 @@ public class InfusionRitual implements Container {
 
     public static Point[] getMap() {
         return PEDESTALS_MAP;
+    }
+
+    public static BlockPos socketPos(BlockPos pedestalPos, int index) {
+        Point point = PEDESTALS_MAP[index];
+        return pedestalPos.offset(point.x, 0, -point.y);
+    }
+
+    public static boolean[] socketsPresent(BlockGetter world, BlockPos pedestalPos) {
+        boolean[] present = new boolean[PEDESTALS_MAP.length];
+        for (int i = 0; i < present.length; i++) {
+            present[i] = world.getBlockState(socketPos(pedestalPos, i)).getBlock() instanceof PedestalBlock;
+        }
+        return present;
+    }
+
+    public record Socket(BlockPos pedestal, int index) {
+        public boolean isNorth() {
+            return index == InfusionRecipe.CatalystSlot.NORTH.index;
+        }
+    }
+
+    public static @Nullable Socket socketAt(BlockGetter world, BlockPos pos) {
+        for (int i = 0; i < PEDESTALS_MAP.length; i++) {
+            Point point = PEDESTALS_MAP[i];
+            BlockPos candidate = pos.offset(-point.x, 0, point.y);
+            if (world.getBlockState(candidate).getBlock() instanceof InfusionPedestal) {
+                return new Socket(candidate, i);
+            }
+        }
+        return null;
+    }
+
+    public static boolean allSocketsPresent(BlockGetter world, BlockPos pedestalPos) {
+        for (boolean present : socketsPresent(world, pedestalPos)) {
+            if (!present) return false;
+        }
+        return true;
     }
 }

@@ -28,9 +28,6 @@ public class BiomeColorsMixin {
     @Inject(method = "getAverageWaterColor", at = @At("RETURN"), cancellable = true)
     private static void be_getWaterColor(BlockAndTintGetter world, BlockPos pos, CallbackInfoReturnable<Integer> info) {
         if (Configs.CLIENT_CONFIG.sulfurWaterColor.get()) {
-            if (world != null && world.getClass().getName().contains("distanthorizons")) {
-                return;
-            }
             BlockAndTintGetter view = world;
             MutableBlockPos mut = new MutableBlockPos();
             mut.setY(pos.getY());
@@ -43,7 +40,8 @@ public class BiomeColorsMixin {
                         return;
                     }
                 }
-            } catch (RuntimeException ignored) {
+            } catch (UnsupportedOperationException ignored) {
+                // Tint-only views do not expose block states; keep their original water tint.
             }
         }
     }

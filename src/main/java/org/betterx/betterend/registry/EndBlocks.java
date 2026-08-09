@@ -598,6 +598,7 @@ public class EndBlocks {
     public static final Block HYDRALUX = registerEndBlockOnly("hydralux", new HydraluxBlock());
     public static final Block HYDRALUX_PETAL_BLOCK = registerBlock("hydralux_petal_block", new HydraluxPetalBlock());
     public static final ColoredMaterial HYDRALUX_PETAL_BLOCK_COLORED = new ColoredMaterial(
+            "hydralux_petal_block",
             HydraluxPetalColoredBlock::new,
             HYDRALUX_PETAL_BLOCK,
             true
@@ -732,6 +733,7 @@ public class EndBlocks {
 
     public static final Block IRON_BULB_LANTERN = registerBlock("iron_bulb_lantern", new BulbVineLanternBlock());
     public static final ColoredMaterial IRON_BULB_LANTERN_COLORED = new ColoredMaterial(
+            "iron_bulb_lantern",
             BulbVineLanternColoredBlock::new,
             IRON_BULB_LANTERN,
             false

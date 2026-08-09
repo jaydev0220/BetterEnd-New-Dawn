@@ -3,16 +3,23 @@ package org.betterx.betterend.blocks;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.betterend.blocks.basis.PedestalBlock;
 import org.betterx.betterend.blocks.entities.InfusionPedestalEntity;
+import org.betterx.betterend.client.effects.InfusionHint;
+import org.betterx.betterend.client.gui.InfusionRecipeScreen;
 import org.betterx.betterend.client.models.EndModels;
 import org.betterx.betterend.rituals.InfusionRitual;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.client.Minecraft;
 import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.models.model.TextureSlot;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -57,6 +65,51 @@ public class InfusionPedestal extends PedestalBlock implements BehaviourStone, B
                 InfusionRitual ritual = pedestal.linkRitual(pedestal, world, pos);
                 ritual.checkRecipe();
             }
+        }
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (level.isClientSide && isPlaceable(state) && !InfusionRitual.allSocketsPresent(level, pos)) {
+            ClientHooks.showHint(level, pos);
+        }
+    }
+
+    @Override
+    public ItemInteractionResult useItemOn(
+            ItemStack itemStack,
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
+        if (state.is(this)
+                && isPlaceable(state)
+                && level.getBlockEntity(pos) instanceof InfusionPedestalEntity pedestal) {
+            boolean complete = InfusionRitual.allSocketsPresent(level, pos);
+            boolean empty = itemStack.isEmpty() && pedestal.isEmpty();
+            if (complete && (player.isSecondaryUseActive() || empty)) {
+                if (level.isClientSide) ClientHooks.showRecipes();
+                return ItemInteractionResult.CONSUME;
+            }
+            if (empty) {
+                if (level.isClientSide) ClientHooks.showHint(level, pos);
+                return ItemInteractionResult.CONSUME;
+            }
+        }
+        return super.useItemOn(itemStack, state, level, pos, player, hand, hit);
+    }
+
+    private static class ClientHooks {
+        private static void showHint(Level level, BlockPos pos) {
+            InfusionHint.trigger(level, pos);
+        }
+
+        private static void showRecipes() {
+            Minecraft.getInstance().setScreen(new InfusionRecipeScreen());
         }
     }
 

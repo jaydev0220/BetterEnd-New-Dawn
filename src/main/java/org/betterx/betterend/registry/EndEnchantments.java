@@ -12,6 +12,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class EndEnchantments {
     public final static EnchantmentKey END_VEIL = EnchantmentManager.createKey(BetterEnd.C.mk("end_veil"));
+    public final static EnchantmentKey RESONANCE = EnchantmentManager.createKey(BetterEnd.C.mk("resonance"));
 
     public static final DataComponentType<Unit> END_VEIL_STATE = EnchantmentManager.registerEffectComponent(
             BetterEnd.C.mk("end_veil"),

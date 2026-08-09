@@ -18,6 +18,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.Level;
 
 
 import java.util.Arrays;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +57,9 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     private final Ingredient[] catalysts;
     final private Ingredient input;
     final private ItemStack output;
+    @Nullable
+    final private ResourceKey<Enchantment> outputEnchantment;
+    final private int outputEnchantmentLevel;
     final private int time;
     final private String group;
     private PlacementInfo placementInfo;
@@ -62,8 +67,22 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     private static final Ingredient EMPTY_INGREDIENT = Ingredient.of(Items.BARRIER);
 
     private InfusionRecipe(Ingredient input, ItemStack output, Ingredient[] catalysts, int time, String group) {
+        this(input, output, catalysts, time, group, null, 0);
+    }
+
+    private InfusionRecipe(
+            Ingredient input,
+            ItemStack output,
+            Ingredient[] catalysts,
+            int time,
+            String group,
+            @Nullable ResourceKey<Enchantment> outputEnchantment,
+            int outputEnchantmentLevel
+    ) {
         this.input = input;
         this.output = ItemStackHelper.callItemStackSetupIfPossible(output);
+        this.outputEnchantment = outputEnchantment;
+        this.outputEnchantmentLevel = outputEnchantmentLevel;
         this.catalysts = catalysts;
         this.time = time;
         this.group = group;
@@ -83,6 +102,18 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
 
     public static Builder create(Identifier id, ItemStack output) {
         return new BuilderImpl(id, output);
+    }
+
+    /**
+     * Legacy enchanted-book result which keeps the dynamic enchantment key out of the serialized ItemStack.
+     * Fabric 1.21.11 otherwise drops custom-enchantment infusion recipes while loading/syncing recipes.
+     */
+    public static Builder createLegacyEnchantedBook(
+            String id,
+            ResourceKey<Enchantment> enchantment,
+            int level
+    ) {
+        return new BuilderImpl(BetterEnd.C.mk(id), enchantment, level);
     }
 
     public static Builder create(
@@ -120,6 +151,14 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
         return this.time;
     }
 
+    public Ingredient getInput() {
+        return this.input;
+    }
+
+    public Ingredient[] getCatalysts() {
+        return this.catalysts.clone();
+    }
+
     @Override
     public boolean matches(InfusionRitual.InfusionInput inv, Level world) {
         boolean valid = this.input.test(inv.getItem(0));
@@ -131,15 +170,20 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     }
 
     private static boolean testCatalyst(Ingredient ingredient, ItemStack stack) {
-        if (EMPTY_INGREDIENT.equals(ingredient)) {
+        if (isEmptyCatalyst(ingredient)) {
             return stack.isEmpty();
         }
         return ingredient.test(stack);
     }
 
+    /** Returns whether this is the internal barrier sentinel used for an intentionally empty socket. */
+    public static boolean isEmptyCatalyst(@Nullable Ingredient ingredient) {
+        return ingredient == null || EMPTY_INGREDIENT.equals(ingredient);
+    }
+
     @Override
     public @NotNull ItemStack assemble(InfusionRitual.InfusionInput recipeInput, HolderLookup.Provider provider) {
-        return output.copy();
+        return createResult(provider);
     }
 
     public boolean canCraftInDimensions(int width, int height) {
@@ -154,7 +198,16 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     }
 
     public @NotNull ItemStack getResultItem(HolderLookup.Provider acc) {
-        return this.output;
+        return createResult(acc);
+    }
+
+    private ItemStack createResult(HolderLookup.Provider provider) {
+        if (outputEnchantment == null) return output.copy();
+        return createEnchantedBook(
+                outputEnchantment,
+                outputEnchantmentLevel,
+                provider.lookupOrThrow(Registries.ENCHANTMENT)
+        );
     }
 
     @Override
@@ -202,6 +255,9 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     public static class BuilderImpl extends BCLBaseRecipeBuilder<Builder, InfusionRecipe> implements Builder {
         private final Ingredient[] catalysts;
         private int time;
+        @Nullable
+        private ResourceKey<Enchantment> outputEnchantment;
+        private int outputEnchantmentLevel;
 
         protected BuilderImpl(Identifier id, ItemLike output) {
             this(id, new ItemStack(output, 1));
@@ -214,6 +270,12 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
                     EMPTY_INGREDIENT, EMPTY_INGREDIENT, EMPTY_INGREDIENT, EMPTY_INGREDIENT
             };
             this.time = 1;
+        }
+
+        protected BuilderImpl(Identifier id, ResourceKey<Enchantment> enchantment, int level) {
+            this(id, Items.ENCHANTED_BOOK);
+            this.outputEnchantment = enchantment;
+            this.outputEnchantmentLevel = level;
         }
 
 
@@ -254,7 +316,9 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
                     this.output,
                     this.catalysts,
                     this.time,
-                    this.group
+                    this.group,
+                    this.outputEnchantment,
+                    this.outputEnchantmentLevel
             );
         }
     }
@@ -292,11 +356,23 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
             final ItemStack output = ItemStack.STREAM_CODEC.decode(packetBuffer);
             final String group = packetBuffer.readUtf();
             final int time = packetBuffer.readVarInt();
+            final ResourceKey<Enchantment> outputEnchantment = packetBuffer.readBoolean()
+                    ? ResourceKey.create(Registries.ENCHANTMENT, packetBuffer.readIdentifier())
+                    : null;
+            final int outputEnchantmentLevel = outputEnchantment == null ? 0 : packetBuffer.readVarInt();
             final Ingredient[] catalysts = new Ingredient[8];
             for (int i = 0; i < 8; i++) {
                 catalysts[i] = Ingredient.CONTENTS_STREAM_CODEC.decode(packetBuffer);
             }
-            return new InfusionRecipe(input, output, catalysts, time, group);
+            return new InfusionRecipe(
+                    input,
+                    output,
+                    catalysts,
+                    time,
+                    group,
+                    outputEnchantment,
+                    outputEnchantmentLevel
+            );
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf packetBuffer, InfusionRecipe recipe) {
@@ -304,6 +380,11 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
             ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.output);
             packetBuffer.writeUtf(recipe.group);
             packetBuffer.writeVarInt(recipe.time);
+            packetBuffer.writeBoolean(recipe.outputEnchantment != null);
+            if (recipe.outputEnchantment != null) {
+                packetBuffer.writeIdentifier(recipe.outputEnchantment.identifier());
+                packetBuffer.writeVarInt(recipe.outputEnchantmentLevel);
+            }
             for (int i = 0; i < 8; i++) {
                 Ingredient.CONTENTS_STREAM_CODEC.encode(packetBuffer, recipe.catalysts[i]);
             }
@@ -343,8 +424,21 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
                 CODEC_CATALYSTS.fieldOf("catalysts").forGetter(recipe -> recipe.catalysts),
                 Codec.INT.optionalFieldOf("time", 1).forGetter(recipe -> recipe.time),
-                Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group)
-        ).apply(instance, InfusionRecipe::new));
+                Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+                ResourceKey.codec(Registries.ENCHANTMENT)
+                           .optionalFieldOf("result_enchantment")
+                           .forGetter(recipe -> Optional.ofNullable(recipe.outputEnchantment)),
+                Codec.INT.optionalFieldOf("result_enchantment_level", 1)
+                         .forGetter(recipe -> recipe.outputEnchantment == null ? 1 : recipe.outputEnchantmentLevel)
+        ).apply(instance, (input, output, catalysts, time, group, enchantment, level) -> new InfusionRecipe(
+                input,
+                output,
+                catalysts,
+                time,
+                group,
+                enchantment.orElse(null),
+                enchantment.isPresent() ? level : 0
+        )));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, InfusionRecipe> STREAM_CODEC = StreamCodec.of(InfusionRecipe.Serializer::toNetwork, InfusionRecipe.Serializer::fromNetwork);
 

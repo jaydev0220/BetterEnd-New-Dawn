@@ -13,6 +13,7 @@ public class EndTemplates {
     static final Identifier EMPTY_SLOT_HANDLE = BetterEnd.C.mk("item/empty_slot_handle");
     static final Identifier EMPTY_SLOT_SWORD_HANDLE = BetterEnd.C.mk("item/empty_slot_sword_handle");
     static final Identifier EMPTY_SLOT_SWORD_BLADE = BetterEnd.C.mk("item/empty_slot_sword_blade");
+    static final Identifier EMPTY_SLOT_SPEAR_TIP = BetterEnd.C.mk("item/empty_slot_spear_tip");
     static final Identifier EMPTY_SLOT_PLATE = BetterEnd.C.mk("item/empty_slot_plate");
     static final Identifier EMPTY_SLOT_HAMMER = BetterEnd.C.mk("item/empty_slot_hammer");
 
@@ -35,6 +36,7 @@ public class EndTemplates {
                             EMPTY_SLOT_AXE_HEAD,
                             EMPTY_SLOT_HOE_HEAD,
                             EMPTY_SLOT_SHOVEL_HEAD
+                            , EMPTY_SLOT_SPEAR_TIP
                     ),
                     List.of(EMPTY_SLOT_STICK)
             );
@@ -48,6 +50,7 @@ public class EndTemplates {
                             EMPTY_SLOT_AXE_HEAD,
                             EMPTY_SLOT_HOE_HEAD,
                             EMPTY_SLOT_SHOVEL_HEAD
+                            , EMPTY_SLOT_SPEAR_TIP
                     ),
                     List.of(EMPTY_SLOT_HANDLE)
             );

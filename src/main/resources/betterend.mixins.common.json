@@ -25,6 +25,7 @@
     "PlayerAdvancementsMixin",
     "PlayerMixin",
     "ServerLevelMixin",
+    "ServerPlayerGameModeMixin",
     "SlimeMixin",
     "SpikeFeatureMixin",
     "StructureMixin",

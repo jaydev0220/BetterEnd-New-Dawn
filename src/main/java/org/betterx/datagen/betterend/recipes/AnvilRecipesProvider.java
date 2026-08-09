@@ -69,6 +69,12 @@ public class AnvilRecipesProvider extends WoverRecipeProvider {
                         .setAllowedTools(EndTags.ANVIL_DIAMOND_TOOL)
                         .setDamage(6)
                         .build(context);
+        BCLRecipeBuilder.anvil(BetterEnd.C.mk("aeternium_spear_tip"), EndItems.AETERNIUM_SPEAR_TIP)
+                        .setPrimaryInputAndUnlock(EndItems.AETERNIUM_INGOT)
+                        .setAnvilLevel(anvilLevel)
+                        .setAllowedTools(EndTags.ANVIL_DIAMOND_TOOL)
+                        .setDamage(6)
+                        .build(context);
         BCLRecipeBuilder.anvil(BetterEnd.C.mk("aeternium_forged_plate"), EndItems.AETERNIUM_FORGED_PLATE)
                         .setPrimaryInputAndUnlock(EndItems.AETERNIUM_INGOT)
                         .setAnvilLevel(anvilLevel)

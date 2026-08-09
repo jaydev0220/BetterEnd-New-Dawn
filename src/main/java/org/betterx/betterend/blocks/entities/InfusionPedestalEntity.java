@@ -73,7 +73,17 @@ public class InfusionPedestalEntity extends PedestalBlockEntity {
             if (blockEntity.hasRitual()) {
                 blockEntity.linkedRitual.tick();
             }
+            if (level.isClientSide) {
+                ClientHooks.spawnHintEffects(level, blockPos);
+            }
             //PedestalBlockEntity.tick(level, blockPos, blockState, blockEntity);
+        }
+    }
+
+    private static class ClientHooks {
+        private static void spawnHintEffects(Level level, BlockPos pos) {
+            org.betterx.betterend.client.effects.InfusionHint.spawnMist(level, pos);
+            org.betterx.betterend.client.effects.InfusionHint.tickFlash(level, pos);
         }
     }
 }

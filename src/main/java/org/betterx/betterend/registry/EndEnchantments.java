@@ -17,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class EndEnchantments {
     public final static EnchantmentKey END_VEIL = EnchantmentManager.createKey(BetterEnd.C.mk("end_veil"));
+    public final static EnchantmentKey RESONANCE = EnchantmentManager.createKey(BetterEnd.C.mk("resonance"));
 
     private static final ResourceKey<DataComponentType<?>> END_VEIL_STATE_KEY = ResourceKey.create(
             Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE,

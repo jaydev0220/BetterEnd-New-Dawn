@@ -29,11 +29,6 @@ public class BiomeColorsMixin {
     @Inject(method = "getAverageWaterColor", at = @At("RETURN"), cancellable = true)
     private static void be_getWaterColor(BlockAndTintGetter world, BlockPos pos, CallbackInfoReturnable<Integer> info) {
         if (Configs.CLIENT_CONFIG.sulfurWaterColor.get()) {
-            if (isDistantHorizonsTintContext(world)) {
-                // DH uses its own tint getters for LOD rendering; avoid world-state probing here.
-                return;
-            }
-
             BlockAndTintGetter view = world;
             MutableBlockPos mut = new MutableBlockPos();
             mut.setY(pos.getY());
@@ -47,13 +42,9 @@ public class BiomeColorsMixin {
                     }
                 }
             } catch (MissingPaletteEntryException | UnsupportedOperationException ignored) {
-                // Avoid crashing on render-thread palette races (e.g., Sodium)
+                // Some tint-only views cannot expose block states; keep their original water tint.
             }
         }
-    }
-
-    private static boolean isDistantHorizonsTintContext(BlockAndTintGetter world) {
-        return world != null && world.getClass().getName().contains("distanthorizons");
     }
 
     private static Point[] buildOffsets() {

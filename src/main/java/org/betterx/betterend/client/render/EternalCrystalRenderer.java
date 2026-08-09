@@ -33,8 +33,19 @@ public class EternalCrystalRenderer {
             MultiBufferSource vertexConsumerProvider,
             int light
     ) {
+        render(age, tickDelta, matrices, vertexConsumerProvider, light, 1.0F);
+    }
+
+    public static void render(
+            int age,
+            float tickDelta,
+            PoseStack matrices,
+            MultiBufferSource vertexConsumerProvider,
+            int light,
+            float alpha
+    ) {
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RENDER_LAYER);
-        int color = colors(age);
+        int color = (Mth.clamp((int) (alpha * 255.0F), 0, 255) << 24) | (colors(age) & 0x00FFFFFF);
         float rotation = (age + tickDelta) / 25.0F + 6.0F;
         matrices.pushPose();
         matrices.scale(0.6F, 0.6F, 0.6F);

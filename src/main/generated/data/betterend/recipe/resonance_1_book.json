@@ -1,0 +1,62 @@
+{
+  "type": "betterend:infusion",
+  "catalysts": {
+    "east": {
+      "item": {
+        "item": "minecraft:echo_shard"
+      }
+    },
+    "north": {
+      "item": {
+        "item": "betterend:enchanted_petal"
+      }
+    },
+    "north_east": {
+      "item": {
+        "item": "minecraft:lapis_lazuli"
+      }
+    },
+    "north_west": {
+      "item": {
+        "item": "minecraft:lapis_lazuli"
+      }
+    },
+    "south": {
+      "item": {
+        "item": "minecraft:echo_shard"
+      }
+    },
+    "south_east": {
+      "item": {
+        "item": "minecraft:lapis_lazuli"
+      }
+    },
+    "south_west": {
+      "item": {
+        "item": "minecraft:lapis_lazuli"
+      }
+    },
+    "west": {
+      "item": {
+        "item": "minecraft:echo_shard"
+      }
+    }
+  },
+  "group": "enchantment",
+  "input": {
+    "item": {
+      "item": "minecraft:book"
+    }
+  },
+  "result": {
+    "item": "minecraft:enchanted_book",
+    "nbt": {
+      "minecraft:stored_enchantments": {
+        "levels": {
+          "betterend:resonance": 1
+        }
+      }
+    }
+  },
+  "time": 300
+}

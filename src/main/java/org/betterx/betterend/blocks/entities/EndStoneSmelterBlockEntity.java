@@ -8,6 +8,7 @@ import org.betterx.betterend.client.gui.EndStoneSmelterMenu;
 import org.betterx.betterend.registry.EndBlockEntities;
 
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +33,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -42,7 +42,9 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
@@ -523,22 +525,25 @@ public class EndStoneSmelterBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     public static Map<Item, Integer> availableFuels() {
-        return AVAILABLE_FUELS;
+        // NeoForge's furnace fuel data map is the authoritative runtime source. Building this
+        // view on demand avoids class-loading AbstractFurnaceBlockEntity#getFuel before other
+        // mods and datapack-backed fuel maps have completed initialization.
+        final Map<Item, Integer> fuels = new LinkedHashMap<>(AVAILABLE_FUELS);
+        BuiltInRegistries.ITEM.forEach(item -> {
+            final int burnTime = getVanillaFuelTime(new ItemStack(item), null);
+            if (burnTime >= 2000) {
+                fuels.putIfAbsent(item, burnTime);
+            }
+        });
+        return Collections.unmodifiableMap(fuels);
     }
 
     public static boolean canUseAsFuel(ItemStack stack, @Nullable Level level) {
-        return AVAILABLE_FUELS.containsKey(stack.getItem()) || getVanillaFuelTime(stack, level) > 2000;
+        return AVAILABLE_FUELS.containsKey(stack.getItem()) || getVanillaFuelTime(stack, level) >= 2000;
     }
 
     private static int getVanillaFuelTime(ItemStack stack, @Nullable Level level) {
         return stack.getBurnTime(RecipeType.BLASTING);
     }
 
-    static {
-        AbstractFurnaceBlockEntity.getFuel().forEach((item, time) -> {
-            if (time >= 2000) {
-                registerFuel(item, time);
-            }
-        });
-    }
 }

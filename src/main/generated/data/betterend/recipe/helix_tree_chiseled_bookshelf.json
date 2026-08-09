@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "chiseled_bookshelf",
+  "key": {
+    "#": {
+      "item": "betterend:helix_tree_planks"
+    },
+    "S": {
+      "item": "betterend:helix_tree_slab"
+    }
+  },
+  "pattern": [
+    "###",
+    "SSS",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "betterend:helix_tree_chiseled_bookshelf"
+  }
+}

@@ -7,6 +7,7 @@ import org.betterx.bclib.interfaces.ClientLevelAccess;
 import org.betterx.betterend.BetterEnd;
 import org.betterx.betterend.blocks.basis.PedestalBlock;
 import org.betterx.betterend.blocks.entities.EternalPedestalEntity;
+import org.betterx.betterend.client.effects.EternalHint;
 import org.betterx.betterend.client.models.EndModels;
 import org.betterx.betterend.client.render.EternalCrystalRenderer;
 import org.betterx.betterend.client.render.PedestalItemRenderer;
@@ -31,6 +32,8 @@ import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -45,6 +48,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.BlockHitResult;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -102,6 +106,36 @@ public class EternalPedestal extends PedestalBlock implements BehaviourStone, Bl
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public ItemInteractionResult useItemOn(
+            ItemStack stack,
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
+        if (stack.isEmpty()
+                && state.is(this)
+                && level.getBlockEntity(pos) instanceof EternalPedestalEntity pedestal
+                && pedestal.isEmpty()) {
+            if (level.isClientSide) ClientHooks.showVision(level, pos);
+            return ItemInteractionResult.CONSUME;
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
+    }
+
+    private static class ClientHooks {
+        private static void showVision(Level level, BlockPos pos) {
+            EternalHint.trigger(level, pos);
+        }
+
+        private static void tickVision(Level level, BlockPos pos, RandomSource random) {
+            EternalHint.tickParticles(level, pos, random);
         }
     }
 
@@ -261,6 +295,7 @@ public class EternalPedestal extends PedestalBlock implements BehaviourStone, Bl
     ) {
         super.animateTick(blockState, level, blockPos, randomSource);
         dispatchParticles(level, blockPos, randomSource);
+        ClientHooks.tickVision(level, blockPos, randomSource);
     }
 
     private static List<Variant> createVariants(

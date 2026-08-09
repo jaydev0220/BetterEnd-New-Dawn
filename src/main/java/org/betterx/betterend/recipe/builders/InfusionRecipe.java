@@ -115,6 +115,14 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
         return this.time;
     }
 
+    public Ingredient getInput() {
+        return this.input;
+    }
+
+    public Ingredient[] getCatalysts() {
+        return this.catalysts.clone();
+    }
+
     @Override
     public boolean matches(InfusionRitual.InfusionInput inv, Level world) {
         boolean valid = this.input.test(inv.getItem(0));

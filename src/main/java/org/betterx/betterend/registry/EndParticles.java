@@ -23,6 +23,8 @@ public class EndParticles {
     public static final SimpleParticleType JUNGLE_SPORE = register("jungle_spore");
     public static final SimpleParticleType FIREFLY = register("firefly");
     public static final SimpleParticleType SMARAGDANT = register("smaragdant_particle");
+    public static final SimpleParticleType INFUSION_MIST = register("infusion_mist");
+    public static final SimpleParticleType INFUSION_MIST_NORTH = register("infusion_mist_north");
 
     public static void register() {
         ParticleProviderRegistry.getInstance().register(GLOWING_SPHERE, ParticleGlowingSphere.FactoryGlowingSphere::new);
@@ -37,6 +39,8 @@ public class EndParticles {
         ParticleProviderRegistry.getInstance().register(JUNGLE_SPORE, ParticleJungleSpore.FactoryJungleSpore::new);
         ParticleProviderRegistry.getInstance().register(FIREFLY, FireflyParticle.FireflyParticleFactory::new);
         ParticleProviderRegistry.getInstance().register(SMARAGDANT, SmaragdantParticle.SmaragdantParticleFactory::new);
+        ParticleProviderRegistry.getInstance().register(INFUSION_MIST, InfusionMistParticle.FactoryInfusionMist::new);
+        ParticleProviderRegistry.getInstance().register(INFUSION_MIST_NORTH, sprites -> new InfusionMistParticle.FactoryInfusionMist(sprites, InfusionMistParticle.NORTH_RGB));
     }
 
     private static SimpleParticleType register(String name) {

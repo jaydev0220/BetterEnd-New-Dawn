@@ -13,6 +13,7 @@ import org.betterx.betterend.blocks.BulbVineLanternColoredBlock;
 import org.betterx.betterend.blocks.ChandelierBlock;
 import org.betterx.betterend.blocks.basis.EndAnvilBlock;
 import org.betterx.betterend.item.EndArmorItem;
+import org.betterx.betterend.item.material.EndToolMaterial;
 import org.betterx.betterend.item.tool.EndHammerItem;
 import org.betterx.betterend.item.tool.EndPickaxe;
 import org.betterx.betterend.registry.EndBlocks;
@@ -71,6 +72,7 @@ public class MetalMaterial implements MaterialManager.Material {
     public final Item hoeHead;
     public final Item swordBlade;
     public final Item swordHandle;
+    public final Item spearTip;
 
     public final Item shovel;
     public final Item sword;
@@ -78,6 +80,7 @@ public class MetalMaterial implements MaterialManager.Material {
     public final Item axe;
     public final Item hoe;
     public final Item hammer;
+    public final Item spear;
 
     public final Item forgedPlate;
     public final Item helmet;
@@ -97,7 +100,7 @@ public class MetalMaterial implements MaterialManager.Material {
     public static MetalMaterial makeNormal(
             String name,
             MapColor color,
-            ToolMaterial material,
+            EndToolMaterial material,
             ArmorTier armor,
             int anvilLevel,
             TagKey<Item> anvilTools,
@@ -124,7 +127,7 @@ public class MetalMaterial implements MaterialManager.Material {
             MapColor color,
             float hardness,
             float resistance,
-            ToolMaterial material,
+            EndToolMaterial material,
             ArmorTier armor,
             int anvilLevel,
             TagKey<Item> anvilTools,
@@ -152,7 +155,7 @@ public class MetalMaterial implements MaterialManager.Material {
             boolean hasOre,
             Supplier<BlockBehaviour.Properties> settingsSupplier,
             Supplier<Properties> itemSettings,
-            ToolMaterial material,
+            EndToolMaterial material,
             ArmorTier armor,
             int anvilLevel,
             TagKey<Item> anvilTools,
@@ -201,21 +204,37 @@ public class MetalMaterial implements MaterialManager.Material {
         nugget = EndItems.registerEndItem(EndItems.prepareItemPath(name + "_nugget"), new ModelProviderItem(newItemSettings()));
         ingot = EndItems.registerEndItem(EndItems.prepareItemPath(name + "_ingot"), new ModelProviderItem(newItemSettings()));
 
+        final ToolMaterial toolMaterial = material.toolMaterial();
+        final EndToolMaterial.SpearTuning spearTuning = material.spearTuning();
+
         shovelHead = EndItems.registerEndItem(name + "_shovel_head");
         pickaxeHead = EndItems.registerEndItem(name + "_pickaxe_head");
         axeHead = EndItems.registerEndItem(name + "_axe_head");
         hoeHead = EndItems.registerEndItem(name + "_hoe_head");
         swordBlade = EndItems.registerEndItem(name + "_sword_blade");
         swordHandle = EndItems.registerEndItem(name + "_sword_handle");
+        spearTip = EndItems.registerEndItem(name + "_spear_tip");
 
-        shovel = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_shovel"), new BaseShovelItem(material, 1.5F, -3.0F, newItemSettings()));
-        sword = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_sword"), new BaseSwordItem(material, 3, -2.4F, newItemSettings()));
-        pickaxe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_pickaxe"), new EndPickaxe(material, 1, -2.8F, newItemSettings()));
-        axe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_axe"), new BaseAxeItem(material, 6.0F, -3.0F, newItemSettings()));
-        hoe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_hoe"), new BaseHoeItem(material, -3, 0.0F, newItemSettings()));
+        shovel = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_shovel"), new BaseShovelItem(toolMaterial, 1.5F, -3.0F, newItemSettings()));
+        sword = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_sword"), new BaseSwordItem(toolMaterial, 3, -2.4F, newItemSettings()));
+        pickaxe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_pickaxe"), new EndPickaxe(toolMaterial, 1, -2.8F, newItemSettings()));
+        axe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_axe"), new BaseAxeItem(toolMaterial, 6.0F, -3.0F, newItemSettings()));
+        hoe = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_hoe"), new BaseHoeItem(toolMaterial, -3, 0.0F, newItemSettings()));
         hammer = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_hammer"),
-                new EndHammerItem(material, 5.0F, -3.2F, 0.3f, newItemSettings())
+                new EndHammerItem(toolMaterial, 5.0F, -3.2F, 0.3f, newItemSettings())
         );
+        spear = EndItems.registerEndTool(EndItems.prepareItemPath(name + "_spear"), new Item(newItemSettings().spear(
+                toolMaterial,
+                spearTuning.attackDuration(),
+                spearTuning.damageMultiplier(),
+                spearTuning.delay(),
+                spearTuning.dismountTime(),
+                spearTuning.dismountThreshold(),
+                spearTuning.knockbackTime(),
+                spearTuning.knockbackThreshold(),
+                spearTuning.damageTime(),
+                spearTuning.damageThreshold()
+        )));
 
         forgedPlate = EndItems.registerEndItem(EndItems.prepareItemPath(name + "_forged_plate"), new ModelProviderItem(newItemSettings()));
         helmet = EndItems.registerEndItem(EndItems.prepareItemPath(name + "_helmet"),
@@ -378,6 +397,9 @@ public class MetalMaterial implements MaterialManager.Material {
         RecipeBuilder.blasting(BetterEnd.C.mk(name + "_hammer_nugget"), nugget)
                      .input(hammer)
                      .build(context);
+        RecipeBuilder.blasting(BetterEnd.C.mk(name + "_spear_nugget"), nugget)
+                     .input(spear)
+                     .build(context);
         RecipeBuilder.blasting(BetterEnd.C.mk(name + "_helmet_nugget"), nugget)
                      .input(helmet)
                      .build(context);
@@ -425,6 +447,13 @@ public class MetalMaterial implements MaterialManager.Material {
                         .setAllowedTools(this.anvilTools)
                         .setDamage(this.anvilLevel)
                         .build(context);
+        BCLRecipeBuilder.anvil(BetterEnd.C.mk(name + "_spear_tip"), spearTip)
+                        .setPrimaryInput(ingot)
+                        .setInputCount(2)
+                        .setAnvilLevel(this.anvilLevel)
+                        .setAllowedTools(this.anvilTools)
+                        .setDamage(this.anvilLevel)
+                        .build(context);
         BCLRecipeBuilder.anvil(BetterEnd.C.mk(name + "_forged_plate"), forgedPlate)
                         .setPrimaryInput(ingot)
                         .setAnvilLevel(this.anvilLevel)
@@ -468,6 +497,11 @@ public class MetalMaterial implements MaterialManager.Material {
                      .base(shovelHead)
                      .addon(Items.STICK)
                      .build(context);
+        RecipeBuilder.smithing(BetterEnd.C.mk(name + "_spear"), spear)
+                     .template(EndTemplates.HANDLE_ATTACHMENT)
+                     .base(spearTip)
+                     .addon(Items.STICK)
+                     .build(context);
 
         // Armor crafting
         RecipeBuilder.crafting(BetterEnd.C.mk(name + "_helmet"), helmet)
@@ -506,5 +540,6 @@ public class MetalMaterial implements MaterialManager.Material {
         if (alloyingOre != null) {
             context.add(alloyingOre, ore.asItem(), rawOre);
         }
+        context.add(ItemTags.SPEARS, spear);
     }
 }

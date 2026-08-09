@@ -2,12 +2,10 @@ package org.betterx.betterend.registry;
 
 import org.betterx.bclib.particles.BCLParticleType;
 import org.betterx.betterend.BetterEnd;
-import org.betterx.betterend.particle.*;
+import org.betterx.betterend.particle.InfusionParticleType;
 
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-
-import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 
 public class EndParticles {
     public static final SimpleParticleType GLOWING_SPHERE = register("glowing_sphere");
@@ -23,21 +21,8 @@ public class EndParticles {
     public static final SimpleParticleType JUNGLE_SPORE = register("jungle_spore");
     public static final SimpleParticleType FIREFLY = register("firefly");
     public static final SimpleParticleType SMARAGDANT = register("smaragdant_particle");
-
-    public static void register() {
-        ParticleProviderRegistry.getInstance().register(GLOWING_SPHERE, ParticleGlowingSphere.FactoryGlowingSphere::new);
-        ParticleProviderRegistry.getInstance().register(PORTAL_SPHERE, PaticlePortalSphere.FactoryPortalSphere::new);
-        ParticleProviderRegistry.getInstance().register(INFUSION, InfusionParticle.InfusionFactory::new);
-        ParticleProviderRegistry.getInstance().register(SULPHUR_PARTICLE, ParticleSulphur.FactorySulphur::new);
-        ParticleProviderRegistry.getInstance().register(GEYSER_PARTICLE, ParticleGeyser.FactoryGeyser::new);
-        ParticleProviderRegistry.getInstance().register(SNOWFLAKE, ParticleSnowflake.FactorySnowflake::new);
-        ParticleProviderRegistry.getInstance().register(AMBER_SPHERE, ParticleGlowingSphere.FactoryGlowingSphere::new);
-        ParticleProviderRegistry.getInstance().register(BLACK_SPORE, ParticleBlackSpore.FactoryBlackSpore::new);
-        ParticleProviderRegistry.getInstance().register(TENANEA_PETAL, ParticleTenaneaPetal.FactoryTenaneaPetal::new);
-        ParticleProviderRegistry.getInstance().register(JUNGLE_SPORE, ParticleJungleSpore.FactoryJungleSpore::new);
-        ParticleProviderRegistry.getInstance().register(FIREFLY, FireflyParticle.FireflyParticleFactory::new);
-        ParticleProviderRegistry.getInstance().register(SMARAGDANT, SmaragdantParticle.SmaragdantParticleFactory::new);
-    }
+    public static final SimpleParticleType INFUSION_MIST = register("infusion_mist");
+    public static final SimpleParticleType INFUSION_MIST_NORTH = register("infusion_mist_north");
 
     private static SimpleParticleType register(String name) {
         return BCLParticleType.register(BetterEnd.C.mk(name));

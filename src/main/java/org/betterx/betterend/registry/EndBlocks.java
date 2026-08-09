@@ -551,8 +551,8 @@ public class EndBlocks {
         SILK_MOTH_HIVE = registerBlock(EndBlocks.prepareBlockPath("silk_moth_hive"), new SilkMothHiveBlock());
         ENDER_ORE = registerBlock(EndBlocks.prepareBlockPath("ender_ore"), new BaseOreBlock(() -> EndItems.ENDER_SHARD, 1, 3, 5) );
         AMBER_ORE = registerBlock(EndBlocks.prepareBlockPath("amber_ore"), new BaseOreBlock(() -> EndItems.RAW_AMBER, 1, 2, 4) );
-        THALLASIUM = MetalMaterial.makeNormal( "thallasium", MapColor.COLOR_BLUE, EndToolMaterial.THALLASIUM.toolMaterial(), EndArmorTier.THALLASIUM, EndToolMaterial.THALLASIUM.getLevel(), EndTags.ANVIL_IRON_TOOL, EndTemplates.THALLASIUM_UPGRADE );
-        TERMINITE = MetalMaterial.makeOreless( "terminite", MapColor.WARPED_WART_BLOCK, 7F, 9F, EndToolMaterial.TERMINITE.toolMaterial(), EndArmorTier.TERMINITE, EndToolMaterial.TERMINITE.getLevel(), EndTags.ANVIL_DIAMOND_TOOL, EndTemplates.TERMINITE_UPGRADE );
+        THALLASIUM = MetalMaterial.makeNormal( "thallasium", MapColor.COLOR_BLUE, EndToolMaterial.THALLASIUM, EndArmorTier.THALLASIUM, EndToolMaterial.THALLASIUM.getLevel(), EndTags.ANVIL_IRON_TOOL, EndTemplates.THALLASIUM_UPGRADE );
+        TERMINITE = MetalMaterial.makeOreless( "terminite", MapColor.WARPED_WART_BLOCK, 7F, 9F, EndToolMaterial.TERMINITE, EndArmorTier.TERMINITE, EndToolMaterial.TERMINITE.getLevel(), EndTags.ANVIL_DIAMOND_TOOL, EndTemplates.TERMINITE_UPGRADE );
         AETERNIUM_BLOCK = registerBlock(EndBlocks.prepareBlockPath("aeternium_block"), new AeterniumBlock());
         CHARCOAL_BLOCK = registerBlock(EndBlocks.prepareBlockPath("charcoal_block"), new CharcoalBlock());
         ENDER_BLOCK = registerBlock(EndBlocks.prepareBlockPath("ender_block"), new EnderBlock());

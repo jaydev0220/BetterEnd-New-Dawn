@@ -25,6 +25,7 @@ import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 
 public class BetterEnd implements ModInitializer {
     public static final ModCore C = ModCore.create("betterend");
@@ -72,6 +73,7 @@ public class BetterEnd implements ModInitializer {
         EndEnchantments.ensureStaticallyLoaded();
         EndPotions.register();
         InfusionRecipe.register();
+        RecipeSynchronization.synchronizeRecipeSerializer(InfusionRecipe.SERIALIZER);
         EndStructures.register();
         EndCarvers.ensureStaticallyLoaded();
         // TEMP: keep the new vertical cave pipeline dormant until upstream stabilizes it.

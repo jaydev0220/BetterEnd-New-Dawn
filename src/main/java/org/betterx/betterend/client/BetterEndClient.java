@@ -28,7 +28,7 @@ public class BetterEndClient implements ClientModInitializer {
         );
         EndBlockEntityRenders.register();
         EndScreens.register();
-        EndParticles.register();
+        EndParticleProviders.register();
         EndEntitiesRenders.register();
         EndModelProviders.register();
         MultiModelItem.register();

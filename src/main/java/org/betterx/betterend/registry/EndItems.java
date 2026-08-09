@@ -205,6 +205,12 @@ public class EndItems {
                     makeEndItemSettings().fireResistant()
             )
     );
+    public static final Item AETERNIUM_SPEAR = registerEndTool(EndItems.prepareItemPath("aeternium_spear"), new Item(
+            makeEndItemSettings().fireResistant().spear(
+                    EndToolMaterial.AETERNIUM.toolMaterial(),
+                    1.15F, 1.2F, 0.4F, 2.5F, 9.0F, 5.5F, 5.1F, 8.75F, 4.6F
+            )
+    ));
 
     // Toolparts //
     public final static Item AETERNIUM_SHOVEL_HEAD = registerEndItem(EndItems.prepareItemPath("aeternium_shovel_head"),
@@ -226,6 +232,9 @@ public class EndItems {
             new ModelProviderItem(makeEndItemSettings().fireResistant())
     );
     public final static Item AETERNIUM_SWORD_HANDLE = registerEndItem(EndItems.prepareItemPath("aeternium_sword_handle"),
+            new ModelProviderItem(makeEndItemSettings().fireResistant())
+    );
+    public final static Item AETERNIUM_SPEAR_TIP = registerEndItem(EndItems.prepareItemPath("aeternium_spear_tip"),
             new ModelProviderItem(makeEndItemSettings().fireResistant())
     );
 

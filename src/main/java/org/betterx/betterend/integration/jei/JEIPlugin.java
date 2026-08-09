@@ -26,10 +26,12 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.recipe.types.IRecipeType;
+import mezz.jei.api.runtime.IJeiRuntime;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Collection;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
@@ -41,6 +43,8 @@ public class JEIPlugin implements IModPlugin {
             IRecipeType.create(BetterEnd.MOD_ID, "infusion", InfusionDisplay.class);
 
     public static List<ItemStack> ALLOYING_FUELS = List.of();
+    private static volatile @Nullable IJeiRuntime runtime;
+    private static volatile List<InfusionDisplay> syncedInfusionDisplays = List.of();
 
     @Override
     public @NotNull Identifier getPluginUid() {
@@ -81,17 +85,39 @@ public class JEIPlugin implements IModPlugin {
                 .toList();
         registration.addRecipes(ALLOYING_RECIPE_TYPE, blastingDisplays);
 
-        List<InfusionDisplay> infusionDisplays = collectRecipes(recipeManager, InfusionRecipe.class)
-                .stream()
-                .map(InfusionDisplay::new)
-                .toList();
-        registration.addRecipes(INFUSION_RECIPE_TYPE, infusionDisplays);
-
         List<AnvilRecipe> anvilRecipes = collectRecipes(recipeManager, AnvilRecipe.class)
                 .stream()
                 .map(RecipeHolder::value)
                 .toList();
         registration.addRecipes(ANVIL_RECIPE_TYPE, anvilRecipes);
+    }
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        runtime = jeiRuntime;
+        if (!syncedInfusionDisplays.isEmpty()) {
+            jeiRuntime.getRecipeManager().addRecipes(INFUSION_RECIPE_TYPE, syncedInfusionDisplays);
+        }
+    }
+
+    @Override
+    public void onRuntimeUnavailable() {
+        runtime = null;
+    }
+
+    /** Refreshes custom recipes after NeoForge has received the server's explicitly synced recipe map. */
+    public static void updateInfusionRecipes(Collection<RecipeHolder<InfusionRecipe>> recipes) {
+        List<InfusionDisplay> updated = recipes.stream().map(InfusionDisplay::new).toList();
+        IJeiRuntime currentRuntime = runtime;
+        if (currentRuntime != null) {
+            if (!syncedInfusionDisplays.isEmpty()) {
+                currentRuntime.getRecipeManager().hideRecipes(INFUSION_RECIPE_TYPE, syncedInfusionDisplays);
+            }
+            if (!updated.isEmpty()) {
+                currentRuntime.getRecipeManager().addRecipes(INFUSION_RECIPE_TYPE, updated);
+            }
+        }
+        syncedInfusionDisplays = updated;
     }
 
     @Override

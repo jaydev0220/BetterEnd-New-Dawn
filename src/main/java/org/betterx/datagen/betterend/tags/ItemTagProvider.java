@@ -48,6 +48,7 @@ TERMINITE = DIAMOND
 AETERNIUM > NETHERITE
  */
         context.add(EndTags.ANVIL_AETERNIUM_TOOL, EndItems.AETERNIUM_HAMMER);
+        context.add(ItemTags.SPEARS, EndItems.AETERNIUM_SPEAR, EndBlocks.THALLASIUM.spear, EndBlocks.TERMINITE.spear);
 
         context.add(EndTags.ANVIL_NETHERITE_TOOL, EndTags.ANVIL_AETERNIUM_TOOL);
         context.add(EndTags.ANVIL_NETHERITE_TOOL, EndItems.NETHERITE_HAMMER);

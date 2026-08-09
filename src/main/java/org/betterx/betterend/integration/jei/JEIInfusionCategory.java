@@ -1,13 +1,13 @@
 package org.betterx.betterend.integration.jei;
 
 import org.betterx.betterend.BetterEnd;
+import org.betterx.betterend.recipe.builders.InfusionRecipe;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -106,13 +106,8 @@ public class JEIInfusionCategory implements IRecipeCategory<InfusionDisplay> {
 
     private static void addInputSlot(IRecipeLayoutBuilder builder, int x, int y, Ingredient ingredient) {
         var slot = builder.addSlot(RecipeIngredientRole.INPUT, x, y);
-        if (!isEmptyCatalystPlaceholder(ingredient)) {
+        if (!InfusionRecipe.isEmptyCatalyst(ingredient)) {
             slot.add(ingredient);
         }
-    }
-
-    private static boolean isEmptyCatalystPlaceholder(Ingredient ingredient) {
-        var items = ingredient.items().toList();
-        return items.size() == 1 && items.get(0).value() == Items.BARRIER;
     }
 }

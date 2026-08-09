@@ -154,6 +154,14 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
         return this.time;
     }
 
+    public Ingredient getInput() {
+        return this.input;
+    }
+
+    public Ingredient[] getCatalysts() {
+        return this.catalysts.clone();
+    }
+
     @Override
     public boolean matches(InfusionRitual.InfusionInput inv, Level world) {
         boolean valid = this.input.test(inv.getItem(0));
@@ -165,10 +173,15 @@ public class InfusionRecipe implements Recipe<InfusionRitual.InfusionInput>, Unk
     }
 
     private static boolean testCatalyst(Ingredient ingredient, ItemStack stack) {
-        if (EMPTY_INGREDIENT.equals(ingredient)) {
+        if (isEmptyCatalyst(ingredient)) {
             return stack.isEmpty();
         }
         return ingredient.test(stack);
+    }
+
+    /** Returns whether this is the internal barrier sentinel used for an intentionally empty socket. */
+    public static boolean isEmptyCatalyst(@Nullable Ingredient ingredient) {
+        return ingredient == null || EMPTY_INGREDIENT.equals(ingredient);
     }
 
     @Override

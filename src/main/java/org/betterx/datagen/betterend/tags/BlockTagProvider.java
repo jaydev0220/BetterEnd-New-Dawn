@@ -9,6 +9,7 @@ import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverTagProvider;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
@@ -28,6 +29,7 @@ public class BlockTagProvider extends WoverTagProvider.ForBlocks {
 
     @Override
     public void prepareTags(TagBootstrapContext<Block> context) {
+        context.add(MineableTags.HAMMER, BlockTags.MINEABLE_WITH_PICKAXE);
         context.add(CommonBlockTags.END_STONES, Blocks.END_STONE);
         context.add(EndTags.SURVIVES_ON_SHADOW_GRASS, EndBlocks.SHADOW_GRASS);
         context.add(EndTags.SURVIVES_ON_AMBER_MOSS, EndBlocks.AMBER_MOSS);

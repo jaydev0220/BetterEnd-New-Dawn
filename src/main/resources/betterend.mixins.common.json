@@ -30,6 +30,7 @@
     "RecipeOutputExtensionMixin",
     "RegistrationEventsMixin",
     "ServerLevelMixin",
+    "ServerPlayerGameModeMixin",
     "SlimeMixin",
     "SpikeFeatureMixin",
     "StructureMixin",

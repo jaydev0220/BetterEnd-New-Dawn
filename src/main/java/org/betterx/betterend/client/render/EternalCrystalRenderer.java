@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Vec3i;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 
 // TODO make crystals bright
@@ -33,7 +34,19 @@ public class EternalCrystalRenderer {
             int light,
             int overlay
     ) {
-        int color = colors(age);
+        render(age, tickDelta, matrices, submitNodeCollector, light, overlay, 1.0F);
+    }
+
+    public static void render(
+            int age,
+            float tickDelta,
+            PoseStack matrices,
+            SubmitNodeCollector submitNodeCollector,
+            int light,
+            int overlay,
+            float alpha
+    ) {
+        int color = ARGB.color(Mth.clamp(alpha, 0.0F, 1.0F), colors(age));
         float rotation = (age + tickDelta) / 25.0F + 6.0F;
         matrices.pushPose();
         matrices.scale(0.6F, 0.6F, 0.6F);

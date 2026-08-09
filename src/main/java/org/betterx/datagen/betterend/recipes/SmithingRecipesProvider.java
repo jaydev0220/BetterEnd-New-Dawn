@@ -35,6 +35,11 @@ public class SmithingRecipesProvider extends WoverRecipeProvider {
                      .base(EndItems.AETERNIUM_SHOVEL_HEAD)
                      .addon(EndItems.LEATHER_WRAPPED_STICK)
                      .build(context);
+        RecipeBuilder.smithing(BetterEnd.C.mk("aeternium_spear"), EndItems.AETERNIUM_SPEAR)
+                     .template(EndTemplates.LEATHER_HANDLE_ATTACHMENT)
+                     .base(EndItems.AETERNIUM_SPEAR_TIP)
+                     .addon(EndItems.LEATHER_WRAPPED_STICK)
+                     .build(context);
         RecipeBuilder.smithing(BetterEnd.C.mk("aeternium_hoe"), EndItems.AETERNIUM_HOE)
                      .template(EndTemplates.LEATHER_HANDLE_ATTACHMENT)
                      .base(EndItems.AETERNIUM_HOE_HEAD)

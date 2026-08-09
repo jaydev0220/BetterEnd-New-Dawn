@@ -75,7 +75,7 @@ public class BetterEndClient {
 
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
-        EndParticles.registerProviders(event);
+        EndParticleProviders.register(event);
     }
 
     @SubscribeEvent

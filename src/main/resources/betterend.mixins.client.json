@@ -10,6 +10,7 @@
     "BlockStateModelLoaderMixin",
     "CapeLayerMixin",
     "EndSkyRendererMixin",
+    "GameRendererMixin",
     "HumanoidMobRendererMixin",
     "ItemStackMixin",
     "MinecraftClientMixin",

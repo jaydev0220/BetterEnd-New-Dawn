@@ -3,6 +3,7 @@ package org.betterx.datagen.betterend.recipes;
 import org.betterx.betterend.recipe.builders.InfusionRecipe;
 import org.betterx.betterend.registry.EndBlocks;
 import org.betterx.betterend.registry.EndItems;
+import org.betterx.betterend.registry.EndEnchantments;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.provider.WoverRecipeProvider;
 
@@ -218,6 +219,32 @@ public class InfusionRecipesProvider extends WoverRecipeProvider {
                       .group("enchantment")
                       .setTime(300)
                       .build(context);
+        createInfusion("resonance_1_book", EndEnchantments.RESONANCE.key(), 1, enchantments)
+                      .setPrimaryInputAndUnlock(Items.BOOK)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH, EndItems.ENCHANTED_PETAL)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.EAST, Items.ECHO_SHARD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH, Items.ECHO_SHARD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.WEST, Items.ECHO_SHARD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_WEST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_WEST, Items.LAPIS_LAZULI)
+                      .group("enchantment")
+                      .setTime(300)
+                      .build(context);
+        createInfusion("resonance_2_book", EndEnchantments.RESONANCE.key(), 2, enchantments)
+                      .setPrimaryInputAndUnlock(Items.BOOK)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH, EndItems.ENCHANTED_PETAL)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.EAST, Items.ECHO_SHARD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH, EndItems.ETERNAL_CRYSTAL)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.WEST, Items.ECHO_SHARD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_WEST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_WEST, Items.LAPIS_LAZULI)
+                      .group("enchantment")
+                      .setTime(450)
+                      .build(context);
         createInfusion("thorns_book", Enchantments.THORNS, 1, enchantments)
                       .setPrimaryInputAndUnlock(Items.BOOK)
                       .addCatalyst(InfusionRecipe.CatalystSlot.NORTH, EndItems.ENCHANTED_PETAL)
@@ -363,6 +390,19 @@ public class InfusionRecipesProvider extends WoverRecipeProvider {
                       .addCatalyst(InfusionRecipe.CatalystSlot.EAST, Items.GOLDEN_SWORD)
                       .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH, Items.IRON_SWORD)
                       .addCatalyst(InfusionRecipe.CatalystSlot.WEST, Items.GOLDEN_SWORD)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_EAST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_WEST, Items.LAPIS_LAZULI)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_WEST, Items.LAPIS_LAZULI)
+                      .group("enchantment")
+                      .setTime(300)
+                      .build(context);
+        createInfusion("lunge_book", Enchantments.LUNGE, 1, enchantments)
+                      .setPrimaryInputAndUnlock(Items.BOOK)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.NORTH, EndItems.ENCHANTED_PETAL)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.EAST, Items.RABBIT_FOOT)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH, Items.RABBIT_FOOT)
+                      .addCatalyst(InfusionRecipe.CatalystSlot.WEST, Items.RABBIT_FOOT)
                       .addCatalyst(InfusionRecipe.CatalystSlot.NORTH_EAST, Items.LAPIS_LAZULI)
                       .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_EAST, Items.LAPIS_LAZULI)
                       .addCatalyst(InfusionRecipe.CatalystSlot.SOUTH_WEST, Items.LAPIS_LAZULI)

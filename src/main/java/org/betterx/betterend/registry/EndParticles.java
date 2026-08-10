@@ -2,25 +2,12 @@ package org.betterx.betterend.registry;
 
 import org.betterx.bclib.particles.BCLParticleType;
 import org.betterx.betterend.BetterEnd;
-import org.betterx.betterend.particle.FireflyParticle;
-import org.betterx.betterend.particle.InfusionParticle;
 import org.betterx.betterend.particle.InfusionParticleType;
-import org.betterx.betterend.particle.InfusionMistParticle;
-import org.betterx.betterend.particle.ParticleBlackSpore;
-import org.betterx.betterend.particle.ParticleGeyser;
-import org.betterx.betterend.particle.ParticleGlowingSphere;
-import org.betterx.betterend.particle.ParticleJungleSpore;
-import org.betterx.betterend.particle.ParticleSnowflake;
-import org.betterx.betterend.particle.ParticleSulphur;
-import org.betterx.betterend.particle.ParticleTenaneaPetal;
-import org.betterx.betterend.particle.PaticlePortalSphere;
-import org.betterx.betterend.particle.SmaragdantParticle;
 
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 public class EndParticles {
@@ -66,23 +53,6 @@ public class EndParticles {
         SMARAGDANT = register("smaragdant_particle");
         INFUSION_MIST = register("infusion_mist");
         INFUSION_MIST_NORTH = register("infusion_mist_north");
-    }
-
-    public static void registerProviders(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(GLOWING_SPHERE, ParticleGlowingSphere.FactoryGlowingSphere::new);
-        event.registerSpriteSet(PORTAL_SPHERE, PaticlePortalSphere.FactoryPortalSphere::new);
-        event.registerSpriteSet(INFUSION, InfusionParticle.InfusionFactory::new);
-        event.registerSpriteSet(SULPHUR_PARTICLE, ParticleSulphur.FactorySulphur::new);
-        event.registerSpriteSet(GEYSER_PARTICLE, ParticleGeyser.FactoryGeyser::new);
-        event.registerSpriteSet(SNOWFLAKE, ParticleSnowflake.FactorySnowflake::new);
-        event.registerSpriteSet(AMBER_SPHERE, ParticleGlowingSphere.FactoryGlowingSphere::new);
-        event.registerSpriteSet(BLACK_SPORE, ParticleBlackSpore.FactoryBlackSpore::new);
-        event.registerSpriteSet(TENANEA_PETAL, ParticleTenaneaPetal.FactoryTenaneaPetal::new);
-        event.registerSpriteSet(JUNGLE_SPORE, ParticleJungleSpore.FactoryJungleSpore::new);
-        event.registerSpriteSet(FIREFLY, FireflyParticle.FireflyParticleFactory::new);
-        event.registerSpriteSet(SMARAGDANT, SmaragdantParticle.SmaragdantParticleFactory::new);
-        event.registerSpriteSet(INFUSION_MIST, InfusionMistParticle.FactoryInfusionMist::new);
-        event.registerSpriteSet(INFUSION_MIST_NORTH, sprites -> new InfusionMistParticle.FactoryInfusionMist(sprites, InfusionMistParticle.NORTH_RGB));
     }
 
     private static SimpleParticleType register(String name) {

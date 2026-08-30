@@ -31,6 +31,7 @@ group = project.maven_group
 def local_bclib = findProject(':BCLib') != null
 def local_wunderlib = findProject(':wunderlib') != null
 def local_wover = findProject(':WorldWeaver') != null
+def local_wover_api_dir = findProperty('betterend_wover_api_dir')
 
 loom {
     accessWidenerPath = file("src/main/resources/betterend.accesswidener")
@@ -109,6 +110,16 @@ dependencies {
     }
     modCompileOnly "mezz.jei:jei-1.21.11-fabric-api:${project.jei_version}"
     modCompileOnly "maven.modrinth:jade:${project.jade_version}"
+
+    // The local WorldWeaver distribution keeps these remapped API modules inside nested JARs.
+    if (local_wover_api_dir) {
+        def local_wover_api_files = fileTree(dir: local_wover_api_dir, include: '**/wover-*-api-*.jar')
+        if (local_wover_api_files.isEmpty()) {
+            throw new GradleException("No remapped WorldWeaver API modules found under ${local_wover_api_dir}")
+        }
+        println "Using local WorldWeaver API modules: ${local_wover_api_files.files.size()}"
+        compileOnly local_wover_api_files
+    }
 
 
     println "Using local WunderLib: ${local_wunderlib}"

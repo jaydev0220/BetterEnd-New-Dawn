@@ -76,7 +76,7 @@ public class LakePiece extends BasePiece {
         }
         return rimPlants;
     }
-    private final Map<Integer, Byte> heightmap = Maps.newHashMap();
+    private final Map<Integer, Byte> heightmap = Maps.newConcurrentMap();
     private OpenSimplexNoise noise;
     private BlockPos center;
     private float radius;

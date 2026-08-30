@@ -136,6 +136,13 @@ public class SulphuricCavePiece extends BasePiece {
                 || state.is(BlockTags.LEAVES);
     }
 
+    private static void replaceBlock(ChunkAccess chunk, BlockPos pos, BlockState newState, int flags) {
+        if (chunk.getBlockEntityNbt(pos) != null) {
+            chunk.removeBlockEntity(pos);
+        }
+        chunk.setBlockState(pos, newState, flags);
+    }
+
     @Override
     public void postProcess(
             WorldGenLevel world,
@@ -192,7 +199,7 @@ public class SulphuricCavePiece extends BasePiece {
                     if (dist < r * r) {
                         BlockState state = chunk.getBlockState(mut);
                         if (isReplaceable(state)) {
-                            chunk.setBlockState(mut, y < waterLevel ? WATER : CAVE_AIR, 3);
+                            replaceBlock(chunk, mut, y < waterLevel ? WATER : CAVE_AIR, 3);
                         }
                     } else if (dist < r2 * r2) {
                         BlockState state = chunk.getBlockState(mut);
@@ -202,7 +209,7 @@ public class SulphuricCavePiece extends BasePiece {
                             if (v > 0.4) {
                                 brimstone.add(mut.immutable());
                             } else {
-                                chunk.setBlockState(mut, rock, 3);
+                                replaceBlock(chunk, mut, rock, 3);
                             }
                         }
                     }
@@ -249,12 +256,13 @@ public class SulphuricCavePiece extends BasePiece {
         }
 
         for (int j = 0; j <= dist; j++) {
-            chunk.setBlockState(mut, EndBlocks.SULPHURIC_ROCK.stone.defaultBlockState(), 3);
+            replaceBlock(chunk, mut, EndBlocks.SULPHURIC_ROCK.stone.defaultBlockState(), 3);
             MHelper.shuffle(HORIZONTAL, random);
             for (Direction dir : HORIZONTAL) {
                 BlockPos p = mut.relative(dir);
                 if (random.nextBoolean() && chunk.getBlockState(p).is(Blocks.WATER)) {
-                    chunk.setBlockState(
+                    replaceBlock(
+                            chunk,
                             p,
                             EndBlocks.TUBE_WORM.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, dir),
                             3
@@ -263,11 +271,11 @@ public class SulphuricCavePiece extends BasePiece {
             }
             mut.setY(mut.getY() + 1);
         }
-        chunk.setBlockState(mut, EndBlocks.HYDROTHERMAL_VENT.defaultBlockState(), 3);
+        replaceBlock(chunk, mut, EndBlocks.HYDROTHERMAL_VENT.defaultBlockState(), 3);
         mut.setY(mut.getY() + 1);
         state = chunk.getBlockState(mut);
         while (state.is(Blocks.WATER)) {
-            chunk.setBlockState(mut, EndBlocks.VENT_BUBBLE_COLUMN.defaultBlockState(), 3);
+            replaceBlock(chunk, mut, EndBlocks.VENT_BUBBLE_COLUMN.defaultBlockState(), 3);
             world.scheduleTick(mut.immutable(), EndBlocks.VENT_BUBBLE_COLUMN, MHelper.randRange(8, 32, random));
             mut.setY(mut.getY() + 1);
             if (mut.getY() > chunkMaxY) break;
@@ -277,7 +285,7 @@ public class SulphuricCavePiece extends BasePiece {
 
     private void placeBrimstone(ChunkAccess chunk, BlockPos pos, RandomSource random) {
         BlockState state = getBrimstone(chunk, pos);
-        chunk.setBlockState(pos, state, 3);
+        replaceBlock(chunk, pos, state, 3);
         if (state.getValue(EndBlockProperties.ACTIVE)) {
             makeShards(chunk, pos, random);
         }
@@ -300,7 +308,7 @@ public class SulphuricCavePiece extends BasePiece {
                                                             .setValue(SulphurCrystalBlock.WATERLOGGED, true)
                                                             .setValue(SulphurCrystalBlock.FACING, dir)
                                                             .setValue(SulphurCrystalBlock.AGE, random.nextInt(3));
-                chunk.setBlockState(side, state, 3);
+                replaceBlock(chunk, side, state, 3);
             }
         }
     }
